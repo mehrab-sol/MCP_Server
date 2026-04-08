@@ -31,29 +31,36 @@ async def main():
 
             tools = await load_mcp_tools(session)
 
-            agent =create_agent(llm, tools)
+            agent =create_agent(llm, 
+                                tools,
+                                system_prompt="""
+                                                You are a smart note-taking assistant.
+                                                Save notes when users ask.
+                                                Retrieve notes when requested.
+                                                Use tools whenever necessary.
+                                                """)
 
 
             print("✅ Smart Notepad Agent Ready!")
             print("Type 'exit' to quit\n")
 
-    while True:
-        user_input = input("You: ")
+            while True:
+                user_input = input("You: ")
 
-        if user_input.lower() == "exit":
-            print("Goodbye!!!")
-            break
+                if user_input.lower() == "exit":
+                    print("Goodbye!!!")
+                    break
 
-        response = await agent.ainvoke(
-            {"messages": [{"role":"user", "content": user_input}]}
-        )
+                response = await agent.ainvoke(
+                    {"messages": [{"role":"user", "content": user_input}]}
+                )
 
-        final_answer = response["messages"][-1].content
-        print(f"Answer: {final_answer}\n")
+            final_answer = response["messages"][-1].content
+            print(f"Answer: {final_answer}\n")
 
 
 if __name__ == "__main__":
     asyncio.run(main())
-    
+
 
 
